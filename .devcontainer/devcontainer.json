@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+// 临时测试：若仍有问题，可临时用root（不推荐长期使用）
+// "remoteUser": "root"
+
+// Features to add to the dev container. More info: https://containers.dev/features.
+// "features": {},
+
+// Use 'forwardPorts' to make a list of ports inside the container available locally.
+// "forwardPorts": [],
+
+// Use 'postCreateCommand' to run commands after the container is created.
+// "postCreateCommand": "pip3 install --user -r requirements.txt",
+
+// Configure tool-specific properties.
+// "customizations": {},
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "Python Dev Container",
+  "dockerComposeFile": ["compose.yml"],
+  "service": "python-dev",
+  "workspaceFolder": "/app",
+  "remoteUser": "appuser",
+  "containerUser": "appuser",
+  "postCreateCommand": "sudo chown -R appuser:appuser /app && sudo chmod -R 775 /app && git config --global --add safe.directory /app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-containers",
+        "mongodb.mongodb-vscode",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.extraPaths": ["/app"],
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}
