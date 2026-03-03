@@ -1,50 +1,48 @@
 ﻿version: '3.8'
-name: python-devcontainer-project
+name: perfect-translator
 
 # 全局數據卷：與根目錄 compose 共用數據卷，數據互通
 volumes:
-  db-data:
+  db-discord:
     external: false
     driver: local
 
 # 全局網路
 networks:
-  dev-network:
+  net-discord-dev:
     driver: bridge
 
 # 敏感配置
 secrets:
-  db-password:
+  db-discord-secret:
     file: ../db/password.txt
 
 services:
   # Dev Container 核心開發容器
-  python-dev:
+  core-dev:
     build:
       context: ..  # 構建上下文為項目根目錄
-      dockerfile: ./Dockerfile  # 指向根目錄的 Dockerfile
+      dockerfile: ./core/Base.docker  # 指向根目錄的 Dockerfile
       args:
         UID: 10001
         GID: 10001
     # 開發環境不暴露端口，由 Dev Container 自動轉發
     ports:
-      - "8001:8001"
+      - "8011:8011"
     # 環境變量：開發環境專屬配置
     environment:
       - POSTGRES_SERVER=dev-db
       - POSTGRES_USER=postgres
       - POSTGRES_DB=dev_db
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
       - PYTHONPATH=/app
       - HOME=/home/appuser
     # 啟動依賴
     depends_on:
       dev-db:
         condition: service_healthy
-    # 敏感配置
     secrets:
-      - db-password
-    # 代碼掛載：實時同步本機代碼，強制匹配 UID/GID 解決文件保存權限問題
+      - db-discord-secret
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     # 容器運行用戶，與 Dockerfile 完全匹配
@@ -56,8 +54,50 @@ services:
     working_dir: /app
     # 加入專用網路
     networks:
-      - dev-network
+      - net-discord-dev
     # 開發環境不重啟
+    restart: no
+
+  python-dev:
+    build:
+      context: ..
+      dockerfile: ./lang/python/Python.docker
+      args:
+        UID: 10001
+        GID: 10001
+    ports:
+      - "8012:8012"
+    depends_on:
+      dev-db:
+        condition: service_healthy
+    secrets:
+      - db-discord-secret
+    volumes:
+      - ../:/app:cached,uid=10001,gid=10001
+    user: "10001:10001"
+    networks:
+      - net-discord-dev
+    restart: no
+
+  discord-dev:
+    build:
+      context: ..
+      dockerfile: ./scenarios/discord/Discord.docker
+      args:
+        UID: 10001
+        GID: 10001
+    ports:
+      - "8013:8013"
+    depends_on:
+      dev-db:
+        condition: service_healthy
+    secrets:
+      - db-discord-secret
+    volumes:
+      - ../:/app:cached,uid=10001,gid=10001
+    user: "10001:10001"
+    networks:
+      - net-discord-dev
     restart: no
 
   # 開發環境專用 PostgreSQL 數據庫
@@ -66,19 +106,19 @@ services:
     restart: always
     user: postgres
     secrets:
-      - db-password
+      - db-discord-secret
     volumes:
-      - db-data:/var/lib/postgresql
+      - db-discord:/var/lib/postgresql
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
     ports:
-      - "5432:5432"
+      - "6432:6432"
     expose:
-      - 5432
+      - 6432
     networks:
-      - dev-network
+      - net-discord-dev
     # 健康檢查
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-d", "dev_db"]

@@ -16,9 +16,9 @@
 // "customizations": {},
 {
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "Python Dev Container",
+  "name": "Discord bot Container",
   "dockerComposeFile": ["compose.yml"],
-  "service": "python-dev",
+  "service": "core-dev",
   "workspaceFolder": "/app",
   "remoteUser": "appuser",
   "containerUser": "appuser",

@@ -1,0 +1,12 @@
+# 基于 Python 专属镜像构建
+FROM ready-docker-python:latest
+
+# 安装 WebAPI 专属依赖（比如 fastapi/uvicorn）
+COPY lang/python/requirements/translate.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/translate.txt
+
+# 暴露 WebAPI 端口（按需修改）
+EXPOSE 8000
+
+# WebAPI 启动命令（替换成你的实际启动逻辑）
+CMD []
