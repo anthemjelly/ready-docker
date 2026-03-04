@@ -1,0 +1,4 @@
+discord.py>=2.3.2
+python-dotenv>=1.0.0
+# 翻譯用的套件（選用，比如 googletrans 或 deep-translator）
+deep-translator>=1.11.4

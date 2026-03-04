@@ -1,22 +1,18 @@
-# ✅ 繼承底層 Base 鏡像
 FROM ready-docker-core-dev:latest
-
-# 切回 root 安裝 Python
 USER root
 
 RUN apk add --no-cache python3 py3-pip
 
-# 配置 venv 虛擬環境（繼承過來的使用者直接用）
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="/app/venv/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV \
     && chown -R appuser:appuser /app
 
-# 升級 pip
-RUN pip install --no-cache-dir -U pip
+# 安裝通用基礎依賴
+COPY lang/python/requirements/base.txt /tmp/
+RUN pip install --no-cache-dir -U pip \
+    && pip install --no-cache-dir -r /tmp/base.txt
 
-# 切回普通使用者
 USER appuser
-
 WORKDIR /app
 CMD ["tail", "-f", "/dev/null"]

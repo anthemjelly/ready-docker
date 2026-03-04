@@ -1,14 +1,11 @@
-# ✅ 繼承中層 Python 鏡像
 FROM ready-docker-python-dev:latest
-
-# 切回 root 安裝專屬依賴（未來有 requirements.txt 再加）
 USER root
-# COPY lang/python/requirements/translate.txt /tmp/
-# RUN pip install --no-cache-dir -r /tmp/translate.txt
-USER appuser
 
-# 暴露端口
+COPY lang/python/requirements/discord.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/discord.txt
+
+USER appuser
+WORKDIR /app
 EXPOSE 8100
 
-# Dev 環境常駐（正式環境換成 uvicorn/discord 啟動命令）
 CMD ["tail", "-f", "/dev/null"]
