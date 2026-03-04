@@ -1,26 +1,24 @@
-# 选轻量且兼容的基础镜像（alpine 或 debian 都可以）
 FROM alpine:3.19
 
-# 通用环境配置（所有镜像都能用）
 ENV TZ=Asia/Taipei \
     LANG=C.UTF-8
 
-# 安装通用工具（和语言无关：curl、时区、证书等）
 RUN apk add --no-cache \
     curl \
     tzdata \
     ca-certificates
 
-# 通用目录（所有场景都需要的目录）!!!!幫我改這裏
+# 建立目錄 + 建立使用者「只做一次」
 RUN mkdir -p /app /logs /config \
     && chmod 755 /app /logs /config \
     && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
     && chown -R appuser:appuser /home/appuser /app /logs /config
 
-# 通用健康检查（所有镜像复用）
 COPY core/scripts/healthcheck.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/healthcheck.sh
-HEALTHCHECK --interval=30s --timeout=5s CMD healthcheck.sh
 
-# 通用工作目录
 WORKDIR /app
+USER appuser
+
+# 重要：Dev Container 專用 → 保持容器不退出
+CMD ["tail", "-f", "/dev/null"]

@@ -1,24 +1,22 @@
-# 基于通用核心镜像构建（先 build core/Dockerfile.base）
-FROM ready-docker-base:latest
+FROM ready-docker-core-dev:latest
 
-# 安装 Python 基础环境（仅这一步和 Python 相关）
+# 切回 root 安裝東西 → 裝完再切回 appuser
+USER root
+
 RUN apk add --no-cache \
     python3 \
-    py3-pip 
+    py3-pip
 
-# 配置 Python 虚拟环境（隔离依赖，避免污染系统）
 ENV VIRTUAL_ENV=/app/venv \
     PATH="/app/venv/bin:$PATH"
-RUN python3 -m venv $VIRTUAL_ENV
 
-# 安装 Python 通用依赖（比如 pip 升级、基础库）
+RUN python3 -m venv $VIRTUAL_ENV \
+    && chown -R appuser:appuser /app/venv
+
 COPY lang/python/requirements/base.txt /tmp/
 RUN pip install --no-cache-dir -U pip \
     && pip install --no-cache-dir -r /tmp/base.txt
 
-# 复制 Python 专属启动脚本
-COPY lang/python/scripts/entrypoint-python.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint-python.sh
+USER appuser
 
-# 基础入口点（后续场景可覆盖）
-ENTRYPOINT ["entrypoint-python.sh"]
+CMD ["tail", "-f", "/dev/null"]

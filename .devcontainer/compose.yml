@@ -1,5 +1,5 @@
 ﻿version: '3.8'
-name: perfect-translator
+name: ready-docker
 
 # 全局數據卷：與根目錄 compose 共用數據卷，數據互通
 volumes:
@@ -26,9 +26,11 @@ services:
       args:
         UID: 10001
         GID: 10001
+    stdin_open: true
+    tty: true
     # 開發環境不暴露端口，由 Dev Container 自動轉發
     ports:
-      - "8011:8011"
+      - "8060:8060"
     # 環境變量：開發環境專屬配置
     environment:
       - POSTGRES_SERVER=dev-db
@@ -47,9 +49,6 @@ services:
       - ../:/app:cached,uid=10001,gid=10001
     # 容器運行用戶，與 Dockerfile 完全匹配
     user: "10001:10001"
-    # Dev Container 必需：保持終端打開，不會啟動後退出
-    stdin_open: true
-    tty: true
     # 工作目錄
     working_dir: /app
     # 加入專用網路
@@ -65,8 +64,10 @@ services:
       args:
         UID: 10001
         GID: 10001
+    stdin_open: true
+    tty: true
     ports:
-      - "8012:8012"
+      - "8061:8061"
     depends_on:
       dev-db:
         condition: service_healthy
@@ -86,8 +87,10 @@ services:
       args:
         UID: 10001
         GID: 10001
+    stdin_open: true
+    tty: true
     ports:
-      - "8013:8013"
+      - "8062:8062"
     depends_on:
       dev-db:
         condition: service_healthy
@@ -114,9 +117,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
     ports:
-      - "6432:6432"
+      - "8090:8090"
     expose:
-      - 6432
+      - 8090
     networks:
       - net-discord-dev
     # 健康檢查
