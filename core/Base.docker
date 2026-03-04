@@ -1,18 +1,15 @@
 FROM alpine:3.19
 ENV TZ=Asia/Taipei LANG=C.UTF-8
 
-# 安裝基礎工具
 RUN apk add --no-cache curl tzdata ca-certificates git
 
-# 【只在這裡建立一次使用者】
 RUN mkdir -p /app /logs /config \
     && chmod 755 /app /logs /config \
     && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
     && chown -R appuser:appuser /home/appuser /app /logs /config
 
-# 健康檢查（如果有檔案就取消註解）
-# COPY core/scripts/healthcheck.sh /usr/local/bin/
-# RUN chmod +x /usr/local/bin/healthcheck.sh
+COPY core/scripts/healthcheck.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/healthcheck.sh
 
 WORKDIR /app
 USER appuser

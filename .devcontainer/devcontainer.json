@@ -23,6 +23,10 @@
   "remoteUser": "appuser",
   "containerUser": "appuser",
   "postCreateCommand": "sudo chown -R appuser:appuser /app && sudo chmod -R 775 /app",
+  "containerEnv": {
+    "VIRTUAL_ENV": "/app/venv",
+    "PATH": "/app/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
