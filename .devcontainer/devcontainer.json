@@ -18,11 +18,11 @@
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
   "name": "Discord bot Container",
   "dockerComposeFile": ["compose.yml"],
-  "service": "core-dev",
+  "service": "discord-dev",
   "workspaceFolder": "/app",
   "remoteUser": "appuser",
   "containerUser": "appuser",
-  "postCreateCommand": "sudo chown -R appuser:appuser /app && sudo chmod -R 775 /app && git config --global --add safe.directory /app",
+  "postCreateCommand": "sudo chown -R appuser:appuser /app && sudo chmod -R 775 /app",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -36,7 +36,7 @@
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.analysis.extraPaths": ["/app"],
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "sh"
       }
     }
   }

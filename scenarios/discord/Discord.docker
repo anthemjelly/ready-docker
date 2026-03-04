@@ -6,7 +6,7 @@ COPY lang/python/requirements/translate.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/translate.txt
 
 # 暴露 WebAPI 端口（按需修改）
-EXPOSE 8000
+EXPOSE 8020
 
 # WebAPI 启动命令（替换成你的实际启动逻辑）
-CMD []
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8020"]
