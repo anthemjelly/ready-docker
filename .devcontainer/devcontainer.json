@@ -34,7 +34,7 @@
         "streetsidesoftware.code-spell-checker"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.defaultInterpreterPath": "/app/venv/bin/python",
         "python.analysis.extraPaths": ["/app"],
         "terminal.integrated.defaultProfile.linux": "sh"
       }

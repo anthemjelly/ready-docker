@@ -2,7 +2,7 @@ FROM alpine:3.19
 ENV TZ=Asia/Taipei LANG=C.UTF-8
 
 # 安裝基礎工具
-RUN apk add --no-cache curl tzdata ca-certificates
+RUN apk add --no-cache curl tzdata ca-certificates git
 
 # 【只在這裡建立一次使用者】
 RUN mkdir -p /app /logs /config \
