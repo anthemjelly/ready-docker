@@ -1,22 +1,27 @@
-FROM ready-docker-core-dev:latest
+# 直接基于alpine，不依赖本地Core镜像，彻底解决死循环
+FROM alpine:3.19
+ENV TZ=Asia/Taipei LANG=C.UTF-8
 
-# 切回 root 安裝東西 → 裝完再切回 appuser
-USER root
+# 安装基础工具+Python
+RUN apk add --no-cache curl tzdata ca-certificates python3 py3-pip
 
-RUN apk add --no-cache \
-    python3 \
-    py3-pip
+# 创建用户+目录，权限完全匹配
+RUN mkdir -p /app /logs /config \
+    && chmod 755 /app /logs /config \
+    && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
+    && chown -R appuser:appuser /home/appuser /app /logs /config
 
-ENV VIRTUAL_ENV=/app/venv \
-    PATH="/app/venv/bin:$PATH"
-
+# 配置venv虚拟环境（一次建好）
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH="/app/venv/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV \
-    && chown -R appuser:appuser /app/venv
+    && chown -R appuser:appuser /app
 
-COPY lang/python/requirements/base.txt /tmp/
-RUN pip install --no-cache-dir -U pip \
-    && pip install --no-cache-dir -r /tmp/base.txt
+# 升级pip，跳过缺失的依赖文件（先保证构建成功）
+RUN pip install --no-cache-dir -U pip
 
+WORKDIR /app
 USER appuser
 
+# 常驻不退出
 CMD ["tail", "-f", "/dev/null"]

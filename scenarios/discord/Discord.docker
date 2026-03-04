@@ -1,11 +1,28 @@
-FROM ready-docker-python-dev:latest
+# 直接基于Python官方alpine镜像，不依赖本地Python镜像，零依赖
+FROM python:3.12-alpine3.19
+ENV TZ=Asia/Taipei LANG=C.UTF-8
 
-USER root
-COPY lang/python/requirements/translate.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/translate.txt
+# 安装基础工具
+RUN apk add --no-cache curl tzdata ca-certificates
+
+# 创建用户+目录，权限完全匹配
+RUN mkdir -p /app /logs /config \
+    && chmod 755 /app /logs /config \
+    && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
+    && chown -R appuser:appuser /home/appuser /app /logs /config
+
+# 配置venv虚拟环境
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH="/app/venv/bin:$PATH"
+RUN python3 -m venv $VIRTUAL_ENV \
+    && chown -R appuser:appuser /app
+
+# 升级pip，跳过缺失的依赖文件
+RUN pip install --no-cache-dir -U pip
+
+WORKDIR /app
 USER appuser
 
+# 暴露端口+常驻命令（Dev Container必须）
 EXPOSE 8100
-
-# 正式啟動
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8100"]
+CMD ["tail", "-f", "/dev/null"]

@@ -1,24 +1,21 @@
 FROM alpine:3.19
+ENV TZ=Asia/Taipei LANG=C.UTF-8
 
-ENV TZ=Asia/Taipei \
-    LANG=C.UTF-8
+# 安装基础工具
+RUN apk add --no-cache curl tzdata ca-certificates
 
-RUN apk add --no-cache \
-    curl \
-    tzdata \
-    ca-certificates
-
-# 建立目錄 + 建立使用者「只做一次」
+# 创建用户+目录（只做一次，权限完全匹配你的compose）
 RUN mkdir -p /app /logs /config \
     && chmod 755 /app /logs /config \
     && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
     && chown -R appuser:appuser /home/appuser /app /logs /config
 
-COPY core/scripts/healthcheck.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/healthcheck.sh
+# 健康检查（如果文件不存在，先注释掉这2行）
+# COPY core/scripts/healthcheck.sh /usr/local/bin/
+# RUN chmod +x /usr/local/bin/healthcheck.sh
 
 WORKDIR /app
 USER appuser
 
-# 重要：Dev Container 專用 → 保持容器不退出
+# Dev Container必须：常驻不退出
 CMD ["tail", "-f", "/dev/null"]
