@@ -1,18 +1,33 @@
 FROM ready-docker-core-dev:latest
 USER root
 
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    python3-dev \  
+    gcc \          
+    musl-dev \     
+    postgresql-dev 
 
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="/app/venv/bin:$PATH"
-RUN python3 -m venv $VIRTUAL_ENV \
-    && chown -R appuser:appuser /app
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
-# 安裝通用基礎依賴
-COPY lang/python/requirements/base.txt /tmp/
-RUN pip install --no-cache-dir -U pip \
-    && pip install --no-cache-dir -r /tmp/base.txt
+RUN mkdir -p /opt/python-deps && \
+    chown -R appuser:appuser /opt/python-deps
 
 USER appuser
+WORKDIR /opt/python-deps
+
+RUN python3 -m venv ./venv
+
+COPY ./lang/python/requirements/base.txt ./requirements.txt
+
+RUN ./venv/bin/pip install --no-cache-dir -U pip && \
+    ./venv/bin/pip install --no-cache-dir -r ./requirements.txt
+
 WORKDIR /app
-CMD ["tail", "-f", "/dev/null"]
+
+USER root
+RUN chown -R appuser:appuser /app
+USER appuser
+
+CMD ["/bin/tail", "-f", "/dev/null"]

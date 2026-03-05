@@ -24,8 +24,8 @@
   "containerUser": "appuser",
   "postCreateCommand": "sudo chown -R appuser:appuser /app && sudo chmod -R 775 /app",
   "containerEnv": {
-    "VIRTUAL_ENV": "/app/venv",
-    "PATH": "/app/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    "VIRTUAL_ENV": "/opt/python-deps/venv",
+    "PATH": "/opt/python-deps/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
   },
   "customizations": {
     "vscode": {
@@ -35,10 +35,11 @@
         "ms-azuretools.vscode-docker",
         "ms-azuretools.vscode-containers",
         "mongodb.mongodb-vscode",
-        "streetsidesoftware.code-spell-checker"
+        "streetsidesoftware.code-spell-checker",
+        "ms-vscode-remote.remote-ssh"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/app/venv/bin/python",
+        "python.defaultInterpreterPath": "/opt/python-deps/venv/bin/python",
         "python.analysis.extraPaths": ["/app"],
         "terminal.integrated.defaultProfile.linux": "sh"
       }

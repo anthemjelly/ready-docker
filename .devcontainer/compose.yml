@@ -18,11 +18,10 @@ secrets:
     file: ../db/password.txt
 
 services:
-  # Dev Container 核心開發容器
   core-dev:
     build:
-      context: ..  # 構建上下文為項目根目錄
-      dockerfile: ./core/Base.docker  # 指向根目錄的 Dockerfile
+      context: ..  
+      dockerfile: ./core/Base.docker 
       args:
         UID: 10001
         GID: 10001
@@ -39,7 +38,6 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
       - PYTHONPATH=/app
       - HOME=/home/appuser
-    # 啟動依賴
     depends_on:
       dev-db:
         condition: service_healthy
@@ -47,14 +45,10 @@ services:
       - db-discord-secret
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
-    # 容器運行用戶，與 Dockerfile 完全匹配
     user: "10001:10001"
-    # 工作目錄
     working_dir: /app
-    # 加入專用網路
     networks:
       - net-discord-dev
-    # 開發環境不重啟
     restart: no
 
   python-dev:
@@ -73,6 +67,10 @@ services:
         condition: service_healthy
     secrets:
       - db-discord-secret
+    environment:
+      - VIRTUAL_ENV=/opt/python-deps/venv
+      - PATH=/opt/python-deps/venv/bin:$PATH
+      - PYTHONPATH=/app:/opt/python-deps/venv/lib/python3.11/site-packages
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     user: "10001:10001"
@@ -117,9 +115,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
     ports:
-      - "8090:8090"
+      - "8090:5432"
     expose:
-      - 8090
+      - 5432
     networks:
       - net-discord-dev
     # 健康檢查
