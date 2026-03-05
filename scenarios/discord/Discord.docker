@@ -1,13 +1,11 @@
 FROM ready-docker-python-dev:latest
-USER root
 
 USER appuser
 WORKDIR /opt/python-deps
 
-COPY lang/python/requirements/discord.txt ./requirements.txt
+COPY --chown=appuser:appuser lang/python/requirements/discord.txt ./requirements.txt
 
-RUN ./venv/bin/pip install --no-cache-dir -U pip && \
-    ./venv/bin/pip install --no-cache-dir -r ./requirements.txt
+RUN ./venv/bin/pip install --no-cache-dir -r ./requirements.txt
 
 WORKDIR /app
 EXPOSE 8100

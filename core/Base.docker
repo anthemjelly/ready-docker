@@ -1,5 +1,6 @@
 FROM alpine:3.19
 ENV TZ=Asia/Taipei LANG=C.UTF-8
+ENV HOME=/home/appuser
 
 RUN apk add --no-cache curl tzdata ca-certificates git
 
@@ -14,5 +15,5 @@ RUN chmod +x /usr/local/bin/healthcheck.sh
 WORKDIR /app
 USER appuser
 
-# Dev Container 常駐
+# 指向容器內黑洞文件
 CMD ["tail", "-f", "/dev/null"]

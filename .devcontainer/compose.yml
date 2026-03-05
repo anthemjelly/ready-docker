@@ -36,8 +36,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=dev_db
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
-      - PYTHONPATH=/app
-      - HOME=/home/appuser
     depends_on:
       dev-db:
         condition: service_healthy
@@ -67,10 +65,6 @@ services:
         condition: service_healthy
     secrets:
       - db-discord-secret
-    environment:
-      - VIRTUAL_ENV=/opt/python-deps/venv
-      - PATH=/opt/python-deps/venv/bin:$PATH
-      - PYTHONPATH=/app:/opt/python-deps/venv/lib/python3.11/site-packages
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     user: "10001:10001"
