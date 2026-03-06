@@ -1,0 +1,12 @@
+# 強制所有 .sh 腳本使用 LF 換行符，Git 絕對不轉換
+*.sh text eol=lf
+
+# 其他文字檔案（如 .yml, .md, .py）保持靈活，但建議也用 LF
+*.yml text eol=lf
+*.yaml text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+
+# 二進位檔案不轉換
+*.png binary
+*.jpg binary
