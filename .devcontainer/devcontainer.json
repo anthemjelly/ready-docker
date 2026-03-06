@@ -22,7 +22,6 @@
   "workspaceFolder": "/app",
   "remoteUser": "appuser",
   "containerUser": "appuser",
-  "postCreateCommand": "ls",
   "customizations": {
     "vscode": {
       "extensions": [
