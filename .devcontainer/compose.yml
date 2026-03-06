@@ -1,11 +1,9 @@
-﻿version: '3.8'
-name: ready-docker-dev
+﻿name: ready-docker-dev
 
 # 全局數據卷
 volumes:
   db-discord-dev:
     external: false
-    driver: local
 
 # 全局網路
 networks:
@@ -25,6 +23,7 @@ services:
       args:
         UID: 10001
         GID: 10001
+    image: anthemjelly/ready-docker-core:latest
     stdin_open: true
     tty: true
     # 開發環境不暴露端口，由 Dev Container 自動轉發
@@ -56,6 +55,7 @@ services:
       args:
         UID: 10001
         GID: 10001
+    image: anthemjelly/ready-docker-python:latest
     stdin_open: true
     tty: true
     ports:
@@ -79,6 +79,7 @@ services:
       args:
         UID: 10001
         GID: 10001
+    image: anthemjelly/ready-docker-discord:latest
     stdin_open: true
     tty: true
     ports:

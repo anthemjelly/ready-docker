@@ -1,11 +1,9 @@
-version: '3.8'
 name: ready-docker
 
 # 全局數據卷
 volumes:
   db-discord:
     external: true
-    driver: local
 
 # 全局網路
 networks:
@@ -19,7 +17,7 @@ secrets:
 
 services:
   core:
-    image: anthemjelly/ready-docker-core:latest
+    image: anthemjelly/ready-docker-core:v1.0.0
     stdin_open: false
     tty: false
     environment:
@@ -52,7 +50,7 @@ services:
         max-file: "3"
 
   python:
-    image: anthemjelly/ready-docker-python:latest
+    image: anthemjelly/ready-docker-python:v1.0.0
     stdin_open: false
     tty: false
     depends_on:
@@ -79,7 +77,7 @@ services:
         max-file: "3"
 
   discord:
-    image: anthemjelly/ready-docker-discord:latest
+    image: anthemjelly/ready-docker-discord:v1.0.0
     stdin_open: false
     tty: false
     depends_on:
