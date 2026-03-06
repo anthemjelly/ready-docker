@@ -1,13 +1,12 @@
 FROM anthemjelly/ready-docker-core:latest
+
 USER root
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
-    py3-pip \
-    python3-dev \  
-    gcc \          
-    musl-dev \     
-    postgresql-dev 
+    python3-pip \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/python-deps && \
     chown -R appuser:appuser /opt/python-deps
@@ -17,9 +16,9 @@ WORKDIR /opt/python-deps
 
 RUN python3 -m venv ./venv
 
-ENV VIRTUAL_ENV=/opt/python-deps/venv
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/python-deps/venv/bin"
-ENV PYTHONPATH="/app:/opt/python-deps/venv/lib/python3.11/site-packages"
+ENV VIRTUAL_ENV=/opt/python-deps/venv \
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/python-deps/venv/bin" \
+    PYTHONPATH="/app:/opt/python-deps/venv/lib/python3.11/site-packages"
 
 COPY ./lang/python/requirements/base.txt ./requirements.txt
 RUN ./venv/bin/pip install --no-cache-dir -U pip && \

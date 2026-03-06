@@ -1,19 +1,32 @@
-FROM alpine:3.19
-ENV TZ=Asia/Taipei LANG=C.UTF-8
-ENV HOME=/home/appuser
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache curl tzdata ca-certificates git
+# 環境變數設定
+ENV TZ=Asia/Taipei \
+    LANG=C.UTF-8 \
+    HOME=/home/appuser
+
+# 安裝基礎套件 + 清理快取（縮小體積）
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    tzdata \
+    ca-certificates \
+    git \
+    && rm -rf /var/lib/apt/lists/* \
+    # 設定時區
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 RUN mkdir -p /app /logs /config \
     && chmod 755 /app /logs /config \
-    && adduser -D -h /home/appuser -u 10001 -s /bin/sh appuser \
+    && useradd -m -d /home/appuser -u 10001 -s /bin/bash appuser \
     && chown -R appuser:appuser /home/appuser /app /logs /config
 
+# 複製健康檢查腳本
 COPY core/scripts/healthcheck.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/healthcheck.sh
 
 WORKDIR /app
 USER appuser
 
-# 指向容器內黑洞文件
+# 保持容器運行
 CMD ["tail", "-f", "/dev/null"]
