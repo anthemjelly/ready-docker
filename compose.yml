@@ -1,0 +1,144 @@
+version: '3.8'
+name: ready-docker
+
+# 全局數據卷
+volumes:
+  db-discord:
+    external: true
+    driver: local
+
+# 全局網路
+networks:
+  net-discord:
+    driver: bridge
+
+# 敏感配置
+secrets:
+  db-discord-secret:
+    file: ../db/password.txt
+
+services:
+  core:
+    image: anthemjelly/ready-docker-core:latest
+    stdin_open: false
+    tty: false
+    environment:
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-discord-secret
+    user: "10001:10001"
+    working_dir: /app
+    networks:
+      - net-discord
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  python:
+    image: anthemjelly/ready-docker-python:latest
+    stdin_open: false
+    tty: false
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-discord-secret
+    user: "10001:10001"
+    networks:
+      - net-discord
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  discord:
+    image: anthemjelly/ready-docker-discord:latest
+    stdin_open: false
+    tty: false
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-discord-secret
+    user: "10001:10001"
+    networks:
+      - net-discord
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 開發環境專用 PostgreSQL 數據庫
+  db:
+    image: postgres:18-bookworm
+    restart: always
+    user: postgres
+    secrets:
+      - db-discord-secret
+    volumes:
+      - db-discord:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
+    expose:
+      - 5432
+    networks:
+      - net-discord
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,9 +1,9 @@
 ﻿version: '3.8'
-name: ready-docker
+name: ready-docker-dev
 
-# 全局數據卷：與根目錄 compose 共用數據卷，數據互通
+# 全局數據卷
 volumes:
-  db-discord:
+  db-discord-dev:
     external: false
     driver: local
 
@@ -14,11 +14,11 @@ networks:
 
 # 敏感配置
 secrets:
-  db-discord-secret:
-    file: ../db/password.txt
+  db-discord-secret-dev:
+    file: ../db/password-dev.txt
 
 services:
-  core-dev:
+  core:
     build:
       context: ..  
       dockerfile: ./core/Base.docker 
@@ -35,12 +35,12 @@ services:
       - POSTGRES_SERVER=dev-db
       - POSTGRES_USER=postgres
       - POSTGRES_DB=dev_db
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret-dev
     depends_on:
       dev-db:
         condition: service_healthy
     secrets:
-      - db-discord-secret
+      - db-discord-secret-dev
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     user: "10001:10001"
@@ -49,7 +49,7 @@ services:
       - net-discord-dev
     restart: no
 
-  python-dev:
+  python:
     build:
       context: ..
       dockerfile: ./lang/python/Python.docker
@@ -64,7 +64,7 @@ services:
       dev-db:
         condition: service_healthy
     secrets:
-      - db-discord-secret
+      - db-discord-secret-dev
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     user: "10001:10001"
@@ -72,7 +72,7 @@ services:
       - net-discord-dev
     restart: no
 
-  discord-dev:
+  discord:
     build:
       context: ..
       dockerfile: ./scenarios/discord/Discord.docker
@@ -87,7 +87,7 @@ services:
       dev-db:
         condition: service_healthy
     secrets:
-      - db-discord-secret
+      - db-discord-secret-dev
     volumes:
       - ../:/app:cached,uid=10001,gid=10001
     user: "10001:10001"
@@ -101,13 +101,13 @@ services:
     restart: always
     user: postgres
     secrets:
-      - db-discord-secret
+      - db-discord-secret-dev
     volumes:
-      - db-discord:/var/lib/postgresql
+      - db-discord-dev:/var/lib/postgresql
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-discord-secret-dev
     ports:
       - "8090:5432"
     expose:

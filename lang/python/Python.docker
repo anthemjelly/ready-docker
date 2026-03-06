@@ -1,4 +1,4 @@
-FROM ready-docker-core-dev:latest
+FROM ready-docker-core:latest
 USER root
 
 RUN apk add --no-cache \
