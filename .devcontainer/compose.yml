@@ -19,7 +19,7 @@ services:
   core:
     build:
       context: ..  
-      dockerfile: ./core/Base.docker 
+      dockerfile: ./core/base.docker 
       args:
         UID: 10001
         GID: 10001
@@ -51,7 +51,7 @@ services:
   python:
     build:
       context: ..
-      dockerfile: ./lang/python/Python.docker
+      dockerfile: ./lang/python/python.docker
       args:
         UID: 10001
         GID: 10001
@@ -75,7 +75,7 @@ services:
   discord:
     build:
       context: ..
-      dockerfile: ./scenarios/discord/Discord.docker
+      dockerfile: ./scenarios/discord/discord.docker
       args:
         UID: 10001
         GID: 10001

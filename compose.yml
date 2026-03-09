@@ -13,7 +13,7 @@ networks:
 # 敏感配置
 secrets:
   db-discord-secret:
-    file: ../db/password.txt
+    file: ./db/password.txt
 
 services:
   core:

@@ -48,8 +48,15 @@ ready-docker/
    ```
 3. **啟動你的場景**
    ```bash
-   cd scenarios/example
-   docker-compose up -d
+   docker volume create db-discord # 使用前請先創建數據卷，視乎你使用的專案
+   docker compose up
+   ```
+   若不在意的話，可以選擇自動生成數據卷，打開生產用的compose.yml
+   ```YAML
+   volumes:
+      db-discord:
+      # 改這行
+      external: false
    ```
 
 ## 🔧 如何擴展其他語言（以 Node.js 為例）
@@ -59,4 +66,4 @@ ready-docker/
 4. 在 `scenarios/` 下建立對應的場景目錄（如 `nodejs-express`）
 
 ## 📄 許可證
-本項目採用 MIT 許可證 - 詳見 [LICENSE](LICENSE) 文件
+本項目採用  GNU GENERAL PUBLIC LICENSE 許可證 - 詳見 [LICENSE](LICENSE) 文件

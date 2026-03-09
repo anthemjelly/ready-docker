@@ -203,6 +203,7 @@ docker volume prune     # 清理未使用的數據卷
 - 使用數據卷（Volume）而非綁定掛載（Bind Mount）存儲持久化數據
 
 ### 3. 生產環境建議
+- !!!使用前請先創建數據卷 docker volume create db-discord / 或是其他專案的卷
 - 不要在鏡像中存放敏感資訊（如密碼、金鑰），改用環境變量或秘密管理工具
 - 啟用容器自動重啟（`restart: always` 或 `restart: unless-stopped`）
 - 使用私有鏡像倉庫管理自定義鏡像
@@ -222,3 +223,6 @@ docker volume prune     # 清理未使用的數據卷
 - [Docker 官方文檔](https://docs.docker.com/)
 - [Docker Compose 官方文檔](https://docs.docker.com/compose/)
 - 提交 Issue 到專案倉庫，標註「Docker 部署」標籤
+
+## 📄 許可證
+本項目採用  GNU GENERAL PUBLIC LICENSE 許可證 - 詳見 [LICENSE](LICENSE) 文件
