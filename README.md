@@ -1,3 +1,8 @@
+> **⚠️ 已遷移（Archived / Migrated）**
+> 這個專案已整理並整合到 **[anthemjelly/ready-stack](https://github.com/anthemjelly/ready-stack)** 的 `packages/ready-docker/`。
+> 新版修好了建置次序、entrypoint、healthcheck、密碼外洩等問題，並有完整 CI。
+> 新功能與修正只在 ready-stack 進行；本 repo 只保留作歷史紀錄。
+
 # 通用 Docker 打包盒
 一套支援**分層構建、多語言擴展、零重複配置**的 Docker 模板，適合作為所有 Docker 專案的「基礎工具箱」。
 
